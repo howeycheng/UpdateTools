@@ -43,7 +43,7 @@ void UpdateTools::readJsonConfig() {
 	QJsonObject jsonObject = document.object();
 	winSCP = std::string(jsonObject["winSCP"].toString().toLocal8Bit());
 	QString localPath = jsonObject["localPath"].toString();
-	ui.textEdit_localPath->append(localPath);
+	ui.lineEdit_localPath->setText(localPath);
 	if (jsonObject.contains(QStringLiteral("remote")))
 	{
 		QJsonValue arrayValue = jsonObject.value(QStringLiteral("remote"));
@@ -93,7 +93,6 @@ void UpdateTools::addRemoteInfo() {
 
 // 删除选中行远程服务器信息
 void UpdateTools::deleteRemoteInfo() {
-
 	int rowToDel = ui.tableView_remote->currentIndex().row();
 	remoteInfoModel->removeRow(rowToDel);
 	--remoteCount;
@@ -101,7 +100,5 @@ void UpdateTools::deleteRemoteInfo() {
 
 // 将界面修改的远程服务器信息保存至配置文件
 void UpdateTools::saveRemoteInfo() {
-	
-
 
 }

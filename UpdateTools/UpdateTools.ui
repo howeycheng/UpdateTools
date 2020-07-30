@@ -2,13 +2,22 @@
 <ui version="4.0">
  <class>UpdateToolsClass</class>
  <widget class="QMainWindow" name="UpdateToolsClass">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
-    <height>606</height>
+    <width>590</width>
+    <height>590</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>590</width>
+    <height>590</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>UpdateTools</string>
@@ -21,50 +30,61 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QTextEdit" name="textEdit_localPath">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>40</y>
-      <width>371</width>
-      <height>61</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>110</y>
+      <x>20</x>
+      <y>70</y>
       <width>71</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
-     <string>目标目录</string>
+     <string>远程目录</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>11</y>
+      <x>20</x>
+      <y>10</y>
       <width>51</width>
-      <height>20</height>
+      <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
-     <string>源目录</string>
+     <string>本地目录</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_upLoad">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>112</y>
-      <width>75</width>
+      <x>290</x>
+      <y>40</y>
+      <width>101</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>上传</string>
@@ -74,10 +94,16 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>150</y>
-      <width>371</width>
-      <height>351</height>
+      <y>100</y>
+      <width>561</width>
+      <height>401</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton_add">
@@ -88,6 +114,13 @@
       <width>71</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
     <property name="text">
      <string>新增</string>
@@ -102,6 +135,13 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
      <string>保存</string>
     </property>
@@ -115,8 +155,25 @@
       <height>21</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <family>微软雅黑</family>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="text">
      <string>删除</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_localPath">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>40</y>
+      <width>251</width>
+      <height>21</height>
+     </rect>
     </property>
    </widget>
   </widget>
@@ -125,7 +182,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>411</width>
+     <width>590</width>
      <height>23</height>
     </rect>
    </property>
