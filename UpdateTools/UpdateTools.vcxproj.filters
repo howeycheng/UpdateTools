@@ -62,7 +62,7 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="D:\Downloads\updateTools.ico">
+    <Image Include="updateTools.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

@@ -13,18 +13,31 @@
     <height>590</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>590</width>
+    <height>590</height>
+   </size>
+  </property>
   <property name="maximumSize">
    <size>
     <width>590</width>
     <height>590</height>
    </size>
   </property>
+  <property name="font">
+   <font>
+    <family>Agency FB</family>
+    <weight>75</weight>
+    <bold>true</bold>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>UpdateTools</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>D:/Downloads/上传.png</normaloff>D:/Downloads/上传.png</iconset>
+    <normaloff>updateTools.ico</normaloff>updateTools.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
@@ -190,7 +203,7 @@
      <x>0</x>
      <y>0</y>
      <width>590</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
