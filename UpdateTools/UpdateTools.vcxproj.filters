@@ -52,11 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="config.txt" />
-    <Text Include="log_file.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json" />
-    <None Include="Resource.aps" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc">
