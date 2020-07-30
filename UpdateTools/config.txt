@@ -1,0 +1,5 @@
+winSCP = C:\\Program Files (x86)\\WinSCP\\winscp.exe
+localPath = D:\\temp
+remotePath = /home/temp
+remote = root:384432^ch@122.51.44.31
+logPath = /log=log_file.txt

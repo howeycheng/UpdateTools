@@ -1,0 +1,21 @@
+{
+  "winSCP": "C:\\Program Files (x86)\\WinSCP\\winscp.exe",
+  "logPath": "/log=log_file.txt",
+  "localPath": "D:\\temp\\发票",
+  "remote": [
+    {
+      "id": "1",
+      "ip": "122.51.44.31",
+      "user": "root",
+      "passwd": "384432^ch",
+      "path": "/home/temp"
+    },
+    {
+      "id": "2",
+      "ip": "10.1.160.162",
+      "user": "root",
+      "passwd": "csc_1o8",
+      "path": "/home/temp"
+    }
+  ]
+}
