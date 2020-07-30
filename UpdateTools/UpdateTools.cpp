@@ -101,5 +101,7 @@ void UpdateTools::deleteRemoteInfo() {
 
 // 将界面修改的远程服务器信息保存至配置文件
 void UpdateTools::saveRemoteInfo() {
+	
+
 
 }
