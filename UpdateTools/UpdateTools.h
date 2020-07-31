@@ -10,6 +10,7 @@
 #include <qjsonobject.h>
 #include <qjsonarray.h>
 #include <QTextCodec>
+#include <qcheckbox.h>
 #include <QStandardItemModel>
 #include <QtWidgets/QMainWindow>
 #include "ui_UpdateTools.h"
@@ -27,7 +28,7 @@ private:
     std::string winSCP; // winSCP路径
     std::vector<std::string> commandVector; // 存储需要执行的winSCP命令
     QStandardItemModel* remoteInfoModel;  // 用于展示远程服务器信息的模型
-    int remoteCount;    // 用于记录远程服务器信息记录数
+    std::vector<int> clickedRow;
 private slots:
     void readJsonConfig();
     void upLoad();
@@ -35,4 +36,5 @@ private slots:
     void addRemoteInfo();
     void deleteRemoteInfo();
     void saveRemoteInfo();
+    void onCheckBoxTotalClicked(bool clicked);
 };

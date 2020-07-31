@@ -3,7 +3,7 @@
 #include <QStandardItemModel>
 
 UpdateTools::UpdateTools(QWidget* parent)
-	: QMainWindow(parent), remoteCount(0)
+	: QMainWindow(parent)
 {
 	ui.setupUi(this);
 	connect(ui.pushButton_upLoad, SIGNAL(clicked()), this, SLOT(upLoad()));
@@ -61,11 +61,14 @@ void UpdateTools::readJsonConfig() {
 				QString remote = user + ":" + passwd + "@" + ip;
 				std::string command = " \"open " + std::string(remote.toLocal8Bit()) + "\" \"option transfer binary\" \"put " + std::string(localPath.toLocal8Bit()) + " " + std::string(path.toLocal8Bit()) + "\"" + " \"close\"";
 				commandVector.push_back(command);
-				remoteCount = i;
 				remoteInfoModel->setItem(i, 0, new QStandardItem(ip));
 				remoteInfoModel->setItem(i, 1, new QStandardItem(user));
 				remoteInfoModel->setItem(i, 2, new QStandardItem(passwd));
 				remoteInfoModel->setItem(i, 3, new QStandardItem(path));
+				// 最后一列增加勾选框
+				QCheckBox* checkBox = new QCheckBox();
+				// 每次在最后一行增加勾选框
+				ui.tableView_remote->setIndexWidget(remoteInfoModel->index(i, 4), checkBox);
 			}
 		}
 	}
@@ -74,31 +77,51 @@ void UpdateTools::readJsonConfig() {
 void UpdateTools::showRemoteInfo() {
 	remoteInfoModel = new QStandardItemModel(this);
 	/*设置列字段名*/
-	remoteInfoModel->setColumnCount(4);
+	remoteInfoModel->setColumnCount(5);
 	remoteInfoModel->setHeaderData(0, Qt::Horizontal, "ip");
 	remoteInfoModel->setHeaderData(1, Qt::Horizontal, "user");
 	remoteInfoModel->setHeaderData(2, Qt::Horizontal, "passwd");
 	remoteInfoModel->setHeaderData(3, Qt::Horizontal, "path");
+	remoteInfoModel->setHeaderData(4, Qt::Horizontal, "clicked");
 	ui.tableView_remote->setModel(remoteInfoModel);
+	ui.tableView_remote->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 // 新增一行远程服务器信息
 void UpdateTools::addRemoteInfo() {
-	remoteInfoModel->setItem(remoteCount + 1, 0, new QStandardItem(""));
-	remoteInfoModel->setItem(remoteCount + 1, 1, new QStandardItem(""));
-	remoteInfoModel->setItem(remoteCount + 1, 2, new QStandardItem(""));
-	remoteInfoModel->setItem(remoteCount + 1, 3, new QStandardItem(""));
-	++remoteCount;
+	int row = remoteInfoModel->rowCount();
+	remoteInfoModel->setItem(row, 0, new QStandardItem(""));
+	remoteInfoModel->setItem(row, 1, new QStandardItem(""));
+	remoteInfoModel->setItem(row, 2, new QStandardItem(""));
+	remoteInfoModel->setItem(row, 3, new QStandardItem(""));
+	remoteInfoModel->setItem(row, 4, new QStandardItem(""));
+	QCheckBox* checkBox = new QCheckBox();
+	connect(checkBox, SIGNAL(clicked(bool)), this, SLOT(onCheckBoxTotalClicked(bool)));
+	// 每次在最后一行增加勾选框
+	ui.tableView_remote->setIndexWidget(remoteInfoModel->index(remoteInfoModel->rowCount() - 1, 4), checkBox);
 }
 
 // 删除选中行远程服务器信息
 void UpdateTools::deleteRemoteInfo() {
-	int rowToDel = ui.tableView_remote->currentIndex().row();
-	remoteInfoModel->removeRow(rowToDel);
-	--remoteCount;
+	// 遍历远程服务器信息表
+	for (size_t i = 0; i < remoteInfoModel->rowCount(); i++)
+	{
+		QCheckBox* box = (QCheckBox*)ui.tableView_remote->indexWidget(remoteInfoModel->index(i, 4));
+		// 若当前行服务器信息表已勾选，则操作
+		if (box != NULL && box->checkState())
+		{
+			remoteInfoModel->removeRow(i);
+		}
+	}
 }
 
 // 将界面修改的远程服务器信息保存至配置文件
 void UpdateTools::saveRemoteInfo() {
+
+}
+
+
+// 勾选全选按钮触发事件
+void UpdateTools::onCheckBoxTotalClicked(bool clicked) {
 
 }
