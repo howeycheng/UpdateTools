@@ -15,6 +15,7 @@ UpdateTools::UpdateTools(QWidget* parent)
 }
 
 void UpdateTools::upLoad() {
+	readJsonConfig();
 	std::string exe = winSCP + " /console /command \"option batch continue\" \"option confirm off\"";
 	auto iter = commandVector.begin();
 	while (iter != commandVector.end())
@@ -27,6 +28,7 @@ void UpdateTools::upLoad() {
 }
 
 void UpdateTools::readJsonConfig() {
+	commandVector.clear();
 	/*解析json文件*/
 	QFile file("config.json");
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -85,7 +87,7 @@ void UpdateTools::showRemoteInfo() {
 	remoteInfoModel->setHeaderData(3, Qt::Horizontal, "path");
 	remoteInfoModel->setHeaderData(4, Qt::Horizontal, "clicked");
 	ui.tableView_remote->setModel(remoteInfoModel);
-	ui.tableView_remote->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+	//ui.tableView_remote->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 // 新增一行远程服务器信息
