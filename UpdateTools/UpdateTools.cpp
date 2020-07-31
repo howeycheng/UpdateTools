@@ -9,6 +9,7 @@ UpdateTools::UpdateTools(QWidget* parent)
 	connect(ui.pushButton_upLoad, SIGNAL(clicked()), this, SLOT(upLoad()));
 	connect(ui.pushButton_add, SIGNAL(clicked()), this, SLOT(addRemoteInfo()));
 	connect(ui.pushButton_delete, SIGNAL(clicked()), this, SLOT(deleteRemoteInfo()));
+	connect(ui.pushButton_save, SIGNAL(clicked()), this, SLOT(saveRemoteInfo()));
 	showRemoteInfo();
 	readJsonConfig();
 }
@@ -103,21 +104,67 @@ void UpdateTools::addRemoteInfo() {
 
 // 删除选中行远程服务器信息
 void UpdateTools::deleteRemoteInfo() {
+	int row = remoteInfoModel->rowCount();
 	// 遍历远程服务器信息表
-	for (size_t i = 0; i < remoteInfoModel->rowCount(); i++)
+	for (size_t i = 0; i < row; i++)
 	{
 		QCheckBox* box = (QCheckBox*)ui.tableView_remote->indexWidget(remoteInfoModel->index(i, 4));
 		// 若当前行服务器信息表已勾选，则操作
-		if (box != NULL && box->checkState())
+		if (box->checkState())
 		{
 			remoteInfoModel->removeRow(i);
+			--row;
+			--i;
 		}
 	}
 }
 
 // 将界面修改的远程服务器信息保存至配置文件
 void UpdateTools::saveRemoteInfo() {
-
+	/*解析json文件*/
+	QFile fileRead("config.json");
+	fileRead.open(QIODevice::ReadOnly | QIODevice::Text);
+	QTextCodec* codec = QTextCodec::codecForName("UTF8");
+	QString value = codec->toUnicode(fileRead.readAll());
+	fileRead.close();
+	QJsonParseError parseJsonErr;
+	QJsonDocument document = QJsonDocument::fromJson(value.toUtf8(), &parseJsonErr);
+	if (!(parseJsonErr.error == QJsonParseError::NoError))
+	{
+		qDebug() << tr("解析json文件错误！");
+		return;
+	}
+	QJsonObject jsonObject = document.object();
+	// 删除原有远程服务器配置
+	jsonObject.remove("remote");
+	QJsonArray remoteArray;
+	// 遍历远程服务器信息表
+	for (size_t i = 0; i < remoteInfoModel->rowCount(); i++)
+	{
+		QString ip = remoteInfoModel->data(remoteInfoModel->index(i, 0)).toString();
+		QString user = remoteInfoModel->data(remoteInfoModel->index(i, 1)).toString();
+		QString passwd = remoteInfoModel->data(remoteInfoModel->index(i, 2)).toString();
+		QString path = remoteInfoModel->data(remoteInfoModel->index(i, 3)).toString();
+		QJsonObject obj;
+		obj.insert("id", (int)i);
+		obj.insert("ip", ip);
+		obj.insert("user", user);
+		obj.insert("passwd", passwd);
+		obj.insert("path", path);
+		remoteArray.append(obj);
+	}
+	jsonObject.insert("remote", remoteArray);
+	QJsonDocument jsonDoc;       //构建JSON文档
+	QFile fileWrite("config.json");
+	if (fileWrite.exists()) {
+		fileWrite.open(QIODevice::WriteOnly | QIODevice::Text);
+		jsonDoc.setObject(jsonObject);
+		fileWrite.seek(0);
+		fileWrite.write(jsonDoc.toJson());
+		fileWrite.flush();
+		fileWrite.close();
+		QMessageBox::information(NULL, QString::fromLocal8Bit("提示"), QString::fromLocal8Bit("保存成功"),QMessageBox::Ok | QMessageBox::Ok);
+	}
 }
 
 

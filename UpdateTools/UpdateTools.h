@@ -11,6 +11,7 @@
 #include <qjsonarray.h>
 #include <QTextCodec>
 #include <qcheckbox.h>
+#include <qmessagebox.h>
 #include <QStandardItemModel>
 #include <QtWidgets/QMainWindow>
 #include "ui_UpdateTools.h"
