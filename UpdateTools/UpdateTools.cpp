@@ -50,7 +50,6 @@ void UpdateTools::upLoad() {
 }
 
 void UpdateTools::readJsonConfig() {
-	commandVector.clear();
 	/*解析json文件*/
 	QFile file("config.json");
 	file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -69,15 +68,6 @@ void UpdateTools::readJsonConfig() {
 	winSCP = std::string(jsonObject["winSCP"].toString().toLocal8Bit());
 	localPath = jsonObject["localPath"].toString();
 	ui.lineEdit_localPath->setText(localPath);
-	QString localPathFinal;
-	if (localPath.contains("\\"))
-	{
-		localPathFinal = localPath.replace("\\", "\\\\");
-	}
-	else
-	{
-		localPathFinal = localPath.replace("\/", "\\\\");
-	}
 	if (jsonObject.contains(QStringLiteral("remote")))
 	{
 		QJsonValue arrayValue = jsonObject.value(QStringLiteral("remote"));
@@ -92,9 +82,6 @@ void UpdateTools::readJsonConfig() {
 				QString user = remoteObject["user"].toString();
 				QString passwd = remoteObject["passwd"].toString();
 				QString path = remoteObject["path"].toString();
-				QString remote = user + ":" + passwd + "@" + ip;
-				std::string command = " \"open " + std::string(remote.toLocal8Bit()) + "\" \"option transfer binary\" \"put " + std::string(localPathFinal.toLocal8Bit()) + " " + std::string(path.toLocal8Bit()) + "\"" + " \"close\"";
-				commandVector.push_back(command);
 				remoteInfoModel->setItem(i, 0, new QStandardItem(ip));
 				remoteInfoModel->setItem(i, 1, new QStandardItem(user));
 				remoteInfoModel->setItem(i, 2, new QStandardItem(passwd));
@@ -110,13 +97,11 @@ void UpdateTools::readJsonConfig() {
 
 void UpdateTools::showRemoteInfo() {
 	remoteInfoModel = new QStandardItemModel(this);
+	QStringList title;
+	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("全选");
 	/*设置列字段名*/
 	remoteInfoModel->setColumnCount(5);
-	remoteInfoModel->setHeaderData(0, Qt::Horizontal, "ip");
-	remoteInfoModel->setHeaderData(1, Qt::Horizontal, "user");
-	remoteInfoModel->setHeaderData(2, Qt::Horizontal, "passwd");
-	remoteInfoModel->setHeaderData(3, Qt::Horizontal, "path");
-	remoteInfoModel->setHeaderData(4, Qt::Horizontal, "clicked");
+	remoteInfoModel->setHorizontalHeaderLabels(title);
 	ui.tableView_remote->setModel(remoteInfoModel);
 	//ui.tableView_remote->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
