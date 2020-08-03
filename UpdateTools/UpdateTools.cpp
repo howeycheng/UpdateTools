@@ -3,19 +3,41 @@
 #include <QStandardItemModel>
 
 UpdateTools::UpdateTools(QWidget* parent)
-	: QMainWindow(parent)
+	: QMainWindow(parent), localPath("")
 {
 	ui.setupUi(this);
 	connect(ui.pushButton_upLoad, SIGNAL(clicked()), this, SLOT(upLoad()));
 	connect(ui.pushButton_add, SIGNAL(clicked()), this, SLOT(addRemoteInfo()));
 	connect(ui.pushButton_delete, SIGNAL(clicked()), this, SLOT(deleteRemoteInfo()));
 	connect(ui.pushButton_save, SIGNAL(clicked()), this, SLOT(saveRemoteInfo()));
+	connect(ui.toolButton_choseLocalPath, SIGNAL(clicked()), this, SLOT(onCheckChoseLocalFileButton()));
+
 	showRemoteInfo();
 	readJsonConfig();
 }
 
 void UpdateTools::upLoad() {
-	readJsonConfig();
+	commandVector.clear();
+	localPath = ui.lineEdit_localPath->text();
+	QString localPathFinal;
+	if (localPath.contains("\\"))
+	{
+		localPathFinal = localPath.replace("\\", "\\\\");
+	}
+	else
+	{
+		localPathFinal = localPath.replace("\/", "\\\\");
+	}
+	for (size_t i = 0; i < remoteInfoModel->rowCount(); i++)
+	{
+		QString ip = remoteInfoModel->data(remoteInfoModel->index(i, 0)).toString();
+		QString user = remoteInfoModel->data(remoteInfoModel->index(i, 1)).toString();
+		QString passwd = remoteInfoModel->data(remoteInfoModel->index(i, 2)).toString();
+		QString path = remoteInfoModel->data(remoteInfoModel->index(i, 3)).toString();
+		QString remote = user + ":" + passwd + "@" + ip;
+		std::string command = " \"open " + std::string(remote.toLocal8Bit()) + "\" \"option transfer binary\" \"put " + std::string(localPathFinal.toLocal8Bit()) + " " + std::string(path.toLocal8Bit()) + "\"" + " \"close\"";
+		commandVector.push_back(command);
+	}
 	std::string exe = winSCP + " /console /command \"option batch continue\" \"option confirm off\"";
 	auto iter = commandVector.begin();
 	while (iter != commandVector.end())
@@ -45,8 +67,17 @@ void UpdateTools::readJsonConfig() {
 	}
 	QJsonObject jsonObject = document.object();
 	winSCP = std::string(jsonObject["winSCP"].toString().toLocal8Bit());
-	QString localPath = jsonObject["localPath"].toString();
+	localPath = jsonObject["localPath"].toString();
 	ui.lineEdit_localPath->setText(localPath);
+	QString localPathFinal;
+	if (localPath.contains("\\"))
+	{
+		localPathFinal = localPath.replace("\\", "\\\\");
+	}
+	else
+	{
+		localPathFinal = localPath.replace("\/", "\\\\");
+	}
 	if (jsonObject.contains(QStringLiteral("remote")))
 	{
 		QJsonValue arrayValue = jsonObject.value(QStringLiteral("remote"));
@@ -62,7 +93,7 @@ void UpdateTools::readJsonConfig() {
 				QString passwd = remoteObject["passwd"].toString();
 				QString path = remoteObject["path"].toString();
 				QString remote = user + ":" + passwd + "@" + ip;
-				std::string command = " \"open " + std::string(remote.toLocal8Bit()) + "\" \"option transfer binary\" \"put " + std::string(localPath.toLocal8Bit()) + " " + std::string(path.toLocal8Bit()) + "\"" + " \"close\"";
+				std::string command = " \"open " + std::string(remote.toLocal8Bit()) + "\" \"option transfer binary\" \"put " + std::string(localPathFinal.toLocal8Bit()) + " " + std::string(path.toLocal8Bit()) + "\"" + " \"close\"";
 				commandVector.push_back(command);
 				remoteInfoModel->setItem(i, 0, new QStandardItem(ip));
 				remoteInfoModel->setItem(i, 1, new QStandardItem(user));
@@ -137,6 +168,9 @@ void UpdateTools::saveRemoteInfo() {
 		return;
 	}
 	QJsonObject jsonObject = document.object();
+	jsonObject.remove("localPath");
+	localPath = ui.lineEdit_localPath->text();
+	jsonObject.insert("localPath", localPath);
 	// 删除原有远程服务器配置
 	jsonObject.remove("remote");
 	QJsonArray remoteArray;
@@ -173,4 +207,10 @@ void UpdateTools::saveRemoteInfo() {
 // 勾选全选按钮触发事件
 void UpdateTools::onCheckBoxTotalClicked(bool clicked) {
 
+}
+
+// 点击加载本地目录事件
+void UpdateTools::onCheckChoseLocalFileButton() {
+	localPath = QFileDialog::getExistingDirectory();
+	ui.lineEdit_localPath->setText(localPath);
 }

@@ -86,9 +86,9 @@
    <widget class="QPushButton" name="pushButton_upLoad">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>40</y>
-      <width>111</width>
+      <x>260</x>
+      <y>510</y>
+      <width>101</width>
       <height>21</height>
      </rect>
     </property>
@@ -201,12 +201,12 @@
      <rect>
       <x>280</x>
       <y>40</y>
-      <width>61</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
     <property name="text">
-     <string>...</string>
+     <string>选择本地目录</string>
     </property>
    </widget>
   </widget>

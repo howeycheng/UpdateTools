@@ -1,15 +1,17 @@
 {
-    "localPath": "D:\\temp\\发票",
+    "localPath": "D:/Work/华锐",
     "logPath": "/log=log_file.txt",
     "remote": [
         {
             "id": 0,
+            "ip": "122.51.44.31",
             "passwd": "384432^ch",
             "path": "/home/temp",
             "user": "root"
         },
         {
             "id": 1,
+            "ip": "10.1.160.162",
             "passwd": "csc_1o8",
             "path": "/home/temp",
             "user": "root"

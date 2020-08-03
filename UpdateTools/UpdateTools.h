@@ -12,6 +12,7 @@
 #include <QTextCodec>
 #include <qcheckbox.h>
 #include <qmessagebox.h>
+#include <qfiledialog.h>
 #include <QStandardItemModel>
 #include <QtWidgets/QMainWindow>
 #include "ui_UpdateTools.h"
@@ -30,6 +31,7 @@ private:
     std::vector<std::string> commandVector; // 存储需要执行的winSCP命令
     QStandardItemModel* remoteInfoModel;  // 用于展示远程服务器信息的模型
     std::vector<int> clickedRow;
+    QString localPath;
 private slots:
     void readJsonConfig();
     void upLoad();
@@ -38,4 +40,5 @@ private slots:
     void deleteRemoteInfo();
     void saveRemoteInfo();
     void onCheckBoxTotalClicked(bool clicked);
+    void onCheckChoseLocalFileButton();
 };
