@@ -98,7 +98,7 @@ void UpdateTools::readJsonConfig() {
 void UpdateTools::showRemoteInfo() {
 	remoteInfoModel = new QStandardItemModel(this);
 	QStringList title;
-	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("全选");
+	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("勾选");
 	/*设置列字段名*/
 	remoteInfoModel->setColumnCount(5);
 	remoteInfoModel->setHorizontalHeaderLabels(title);
