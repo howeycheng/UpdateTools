@@ -88,11 +88,13 @@
     <QtUic Include="UpdateTools.ui" />
     <QtMoc Include="UpdateTools.h" />
     <ClCompile Include="Config.cpp" />
+    <ClCompile Include="JsonConfig.cpp" />
     <ClCompile Include="UpdateTools.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="JsonConfig.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

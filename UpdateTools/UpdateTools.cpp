@@ -1,6 +1,6 @@
 #include "UpdateTools.h"
 #include "Config.h"
-#include <QStandardItemModel>
+
 
 UpdateTools::UpdateTools(QWidget* parent)
 	: QMainWindow(parent), localPath("")
@@ -11,9 +11,84 @@ UpdateTools::UpdateTools(QWidget* parent)
 	connect(ui.pushButton_delete, SIGNAL(clicked()), this, SLOT(deleteRemoteInfo()));
 	connect(ui.pushButton_save, SIGNAL(clicked()), this, SLOT(saveRemoteInfo()));
 	connect(ui.toolButton_choseLocalPath, SIGNAL(clicked()), this, SLOT(onCheckChoseLocalFileButton()));
+	connect(ui.listView_task, SIGNAL(clicked(QModelIndex)), this, SLOT(showTaskDetail(QModelIndex)));
+	remoteInfoModel = new QStandardItemModel(this);
+	QStringList title;
+	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("勾选");
+	/*设置列字段名*/
+	remoteInfoModel->setColumnCount(5);
+	remoteInfoModel->setHorizontalHeaderLabels(title);
+	ui.tableView_remote->setModel(remoteInfoModel);
+	showTasks();
+}
 
-	showRemoteInfo();
-	readJsonConfig();
+void UpdateTools::showTasks() {
+	/*解析json文件*/
+	JsonConfig jc("config.json");
+	jc.loadJsonConfig();
+	QJsonObject jsonObject = jc.configJsonObj;
+	winSCP = std::string(jsonObject["winSCP"].toString().toLocal8Bit());
+	if (jsonObject.contains(QStringLiteral("tasks")))
+	{
+		QStringList l;
+		QJsonValue arrayValue = jsonObject.value(QStringLiteral("tasks"));
+		if (arrayValue.isArray())
+		{
+			QJsonArray array = arrayValue.toArray();
+			for (int i = 0; i < array.size(); i++)
+			{
+				QJsonValue taskArray = array.at(i);
+				QJsonObject taskObject = taskArray.toObject();
+				QString taskName = taskObject["name"].toString();
+				l.append(taskName);
+			}
+		}
+		QStringListModel* taskModel = new QStringListModel(l);
+		ui.listView_task->setModel(taskModel);
+	}
+}
+
+void UpdateTools::showTaskDetail(QModelIndex index)
+{
+	remoteInfoModel->clear();
+	QStringList title;
+	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("勾选");
+	/*设置列字段名*/
+	remoteInfoModel->setColumnCount(5);
+	remoteInfoModel->setHorizontalHeaderLabels(title);
+	ui.tableView_remote->setModel(remoteInfoModel);
+	QString task = ui.listView_task->model()->data(index).toString();
+	ui.tabWidget_task->setTabText(0,task);
+	JsonConfig jc("config.json");
+	jc.loadJsonConfig();
+	QJsonObject jsonObject = jc.configJsonObj;
+	if (jsonObject.contains(QStringLiteral("tasks")))
+	{
+		QJsonValue tasksValue = jsonObject.value(QStringLiteral("tasks"));
+		QJsonValue taskValue = tasksValue.toArray().at(index.row());
+		localPath = taskValue.toObject().value(QStringLiteral("localPath")).toString();
+		ui.lineEdit_localPath->setText(localPath);
+		QJsonValue remotesArray = taskValue.toObject().value(QStringLiteral("remote"));
+		QJsonArray remotes = remotesArray.toArray();
+		for (int i = 0; i < remotes.size(); i++)
+		{
+			QJsonValue remoteArray = remotes.at(i);
+			QJsonObject remoteObject = remoteArray.toObject();
+			QString ip = remoteObject["ip"].toString();
+			QString user = remoteObject["user"].toString();
+			QString passwd = remoteObject["passwd"].toString();
+			QString path = remoteObject["path"].toString();
+			remoteInfoModel->setItem(i, 0, new QStandardItem(ip));
+			remoteInfoModel->setItem(i, 1, new QStandardItem(user));
+			remoteInfoModel->setItem(i, 2, new QStandardItem(passwd));
+			remoteInfoModel->setItem(i, 3, new QStandardItem(path));
+			// 最后一列增加勾选框
+			QCheckBox* checkBox = new QCheckBox();
+			// 每次在最后一行增加勾选框
+			ui.tableView_remote->setIndexWidget(remoteInfoModel->index(i, 4), checkBox);
+		}
+
+	}
 }
 
 void UpdateTools::upLoad() {
@@ -47,63 +122,6 @@ void UpdateTools::upLoad() {
 	}
 	exe += " /log=log_file.txt";
 	WinExec(exe.c_str(), SW_SHOW);
-}
-
-void UpdateTools::readJsonConfig() {
-	/*解析json文件*/
-	QFile file("config.json");
-	file.open(QIODevice::ReadOnly | QIODevice::Text);
-	QTextCodec* codec = QTextCodec::codecForName("UTF8");
-	QString value = codec->toUnicode(file.readAll());
-	file.close();
-
-	QJsonParseError parseJsonErr;
-	QJsonDocument document = QJsonDocument::fromJson(value.toUtf8(), &parseJsonErr);
-	if (!(parseJsonErr.error == QJsonParseError::NoError))
-	{
-		qDebug() << tr("解析json文件错误！");
-		return;
-	}
-	QJsonObject jsonObject = document.object();
-	winSCP = std::string(jsonObject["winSCP"].toString().toLocal8Bit());
-	localPath = jsonObject["localPath"].toString();
-	ui.lineEdit_localPath->setText(localPath);
-	if (jsonObject.contains(QStringLiteral("remote")))
-	{
-		QJsonValue arrayValue = jsonObject.value(QStringLiteral("remote"));
-		if (arrayValue.isArray())
-		{
-			QJsonArray array = arrayValue.toArray();
-			for (int i = 0; i < array.size(); i++)
-			{
-				QJsonValue remoteArray = array.at(i);
-				QJsonObject remoteObject = remoteArray.toObject();
-				QString ip = remoteObject["ip"].toString();
-				QString user = remoteObject["user"].toString();
-				QString passwd = remoteObject["passwd"].toString();
-				QString path = remoteObject["path"].toString();
-				remoteInfoModel->setItem(i, 0, new QStandardItem(ip));
-				remoteInfoModel->setItem(i, 1, new QStandardItem(user));
-				remoteInfoModel->setItem(i, 2, new QStandardItem(passwd));
-				remoteInfoModel->setItem(i, 3, new QStandardItem(path));
-				// 最后一列增加勾选框
-				QCheckBox* checkBox = new QCheckBox();
-				// 每次在最后一行增加勾选框
-				ui.tableView_remote->setIndexWidget(remoteInfoModel->index(i, 4), checkBox);
-			}
-		}
-	}
-}
-
-void UpdateTools::showRemoteInfo() {
-	remoteInfoModel = new QStandardItemModel(this);
-	QStringList title;
-	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("勾选");
-	/*设置列字段名*/
-	remoteInfoModel->setColumnCount(5);
-	remoteInfoModel->setHorizontalHeaderLabels(title);
-	ui.tableView_remote->setModel(remoteInfoModel);
-	//ui.tableView_remote->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 // 新增一行远程服务器信息
@@ -184,7 +202,7 @@ void UpdateTools::saveRemoteInfo() {
 		fileWrite.write(jsonDoc.toJson());
 		fileWrite.flush();
 		fileWrite.close();
-		QMessageBox::information(NULL, QString::fromLocal8Bit("提示"), QString::fromLocal8Bit("保存成功"),QMessageBox::Ok | QMessageBox::Ok);
+		QMessageBox::information(NULL, QString::fromLocal8Bit("提示"), QString::fromLocal8Bit("保存成功"), QMessageBox::Ok | QMessageBox::Ok);
 	}
 }
 

@@ -15,9 +15,12 @@
 #include <qfiledialog.h>
 #include <QStandardItemModel>
 #include <QtWidgets/QMainWindow>
+#include <QStandardItemModel>
+#include <qstringlistmodel.h>
 #include "ui_UpdateTools.h"
 #include "x64/Debug/uic/ui_UpdateTools.h"
 
+#include "JsonConfig.h"
 class UpdateTools : public QMainWindow
 {
     Q_OBJECT
@@ -33,9 +36,9 @@ private:
     std::vector<int> clickedRow;
     QString localPath;
 private slots:
-    void readJsonConfig();
+    void showTasks();
+    void showTaskDetail(QModelIndex index);
     void upLoad();
-    void showRemoteInfo();
     void addRemoteInfo();
     void deleteRemoteInfo();
     void saveRemoteInfo();
