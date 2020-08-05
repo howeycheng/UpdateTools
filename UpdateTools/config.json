@@ -1,39 +1,60 @@
 {
-  "winSCP": "C:\\Program Files (x86)\\WinSCP\\winscp.exe",
-  "logPath": "/log=log_file.txt",
-  "tasks": [
-    {
-      "name": "内存BPU升级",
-      "localPath": "D:/Work/华锐",
-      "remote": [
+    "logPath": "/log=log_file.txt",
+    "tasks": [
         {
-          "id": 0,
-          "ip": "122.51.44.31",
-          "passwd": "384432^ch",
-          "path": "/home/temp",
-          "user": "root"
+            "localPath": "D:/Work/华锐",
+            "name": "内存BPU升级",
+            "remote": [
+                {
+                    "id": 0,
+                    "ip": "122.51.44.31",
+                    "passwd": "384432^ch",
+                    "path": "/home/temp",
+                    "user": "root"
+                },
+                {
+                    "id": 1,
+                    "ip": "122.51.44.31",
+                    "passwd": "384432^ch",
+                    "path": "/home/temp",
+                    "user": "root"
+                },
+                {
+                    "id": 2,
+                    "ip": "122.51.44.31",
+                    "passwd": "384432^ch",
+                    "path": "/home/temp",
+                    "user": "root"
+                }
+            ]
         },
         {
-          "id": 1,
-          "ip": "10.1.160.162",
-          "passwd": "csc_1o8",
-          "path": "/home/temp",
-          "user": "root"
+            "localPath": "D:/Work/华锐",
+            "name": "TT数据库上传",
+            "remote": [
+                {
+                    "id": 0,
+                    "ip": "10.1.160.162",
+                    "passwd": "csc_1o8",
+                    "path": "/home/temp",
+                    "user": "root"
+                },
+                {
+                    "id": 1,
+                    "ip": "/home/temp",
+                    "passwd": "csc_1o8",
+                    "path": "/home/temp",
+                    "user": "root"
+                },
+                {
+                    "id": 2,
+                    "ip": "/home/temp",
+                    "passwd": "csc_1o8",
+                    "path": "/home/temp",
+                    "user": "root"
+                }
+            ]
         }
-      ]
-    },
-    {
-      "name": "TT数据库上传",
-      "localPath": "D:/Work/华锐",
-      "remote": [
-        {
-          "id": 1,
-          "ip": "10.1.160.162",
-          "passwd": "csc_1o8",
-          "path": "/home/temp",
-          "user": "root"
-        }
-      ]
-    }
-  ]
+    ],
+    "winSCP": "C:\\Program Files (x86)\\WinSCP\\winscp.exe"
 }

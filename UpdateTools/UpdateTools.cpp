@@ -157,25 +157,21 @@ void UpdateTools::deleteRemoteInfo() {
 
 // 将界面修改的远程服务器信息保存至配置文件
 void UpdateTools::saveRemoteInfo() {
+	int index = ui.listView_task->currentIndex().row();
 	/*解析json文件*/
-	QFile fileRead("config.json");
-	fileRead.open(QIODevice::ReadOnly | QIODevice::Text);
-	QTextCodec* codec = QTextCodec::codecForName("UTF8");
-	QString value = codec->toUnicode(fileRead.readAll());
-	fileRead.close();
-	QJsonParseError parseJsonErr;
-	QJsonDocument document = QJsonDocument::fromJson(value.toUtf8(), &parseJsonErr);
-	if (!(parseJsonErr.error == QJsonParseError::NoError))
-	{
-		qDebug() << tr("解析json文件错误！");
-		return;
-	}
-	QJsonObject jsonObject = document.object();
-	jsonObject.remove("localPath");
+	JsonConfig jc("config.json");
+	jc.loadJsonConfig();
+	QJsonObject jsonObject = jc.configJsonObj;
+
+	QJsonArray tasksValue = jsonObject.value(QStringLiteral("tasks")).toArray();
+	QJsonValue taskValue = tasksValue.at(index);
+	QJsonObject newTaskObj;
+	newTaskObj.insert("name", taskValue.toObject()["name"].toString());
+	//jsonObject.remove("localPath");
 	localPath = ui.lineEdit_localPath->text();
-	jsonObject.insert("localPath", localPath);
+	newTaskObj.insert("localPath", localPath);
 	// 删除原有远程服务器配置
-	jsonObject.remove("remote");
+	//jsonObject.remove("remote");
 	QJsonArray remoteArray;
 	// 遍历远程服务器信息表
 	for (size_t i = 0; i < remoteInfoModel->rowCount(); i++)
@@ -192,7 +188,11 @@ void UpdateTools::saveRemoteInfo() {
 		obj.insert("path", path);
 		remoteArray.append(obj);
 	}
-	jsonObject.insert("remote", remoteArray);
+	newTaskObj.insert("remote", remoteArray);
+
+	tasksValue.replace(index, newTaskObj);
+	jsonObject.remove("tasks");
+	jsonObject.insert("tasks", tasksValue);
 	QJsonDocument jsonDoc;       //构建JSON文档
 	QFile fileWrite("config.json");
 	if (fileWrite.exists()) {
