@@ -35,6 +35,8 @@ private:
     QStandardItemModel* remoteInfoModel;  // 用于展示远程服务器信息的模型
     std::vector<int> clickedRow;
     QString localPath;
+    QStringListModel* taskModel;
+
 private slots:
     void showTasks();
     void showTaskDetail(QModelIndex index);
@@ -44,4 +46,6 @@ private slots:
     void saveRemoteInfo();
     void onCheckBoxTotalClicked(bool clicked);
     void onCheckChoseLocalFileButton();
+    void onCheckActionNewTask();
+    void onCheckActionDeleteTask();
 };

@@ -3,7 +3,7 @@
 
 
 UpdateTools::UpdateTools(QWidget* parent)
-	: QMainWindow(parent), localPath("")
+	: QMainWindow(parent), localPath(""), taskModel(NULL)
 {
 	ui.setupUi(this);
 	connect(ui.pushButton_upLoad, SIGNAL(clicked()), this, SLOT(upLoad()));
@@ -12,6 +12,8 @@ UpdateTools::UpdateTools(QWidget* parent)
 	connect(ui.pushButton_save, SIGNAL(clicked()), this, SLOT(saveRemoteInfo()));
 	connect(ui.toolButton_choseLocalPath, SIGNAL(clicked()), this, SLOT(onCheckChoseLocalFileButton()));
 	connect(ui.listView_task, SIGNAL(clicked(QModelIndex)), this, SLOT(showTaskDetail(QModelIndex)));
+	connect(ui.action_newTask,SIGNAL(triggered()),this,SLOT(onCheckActionNewTask()));
+	connect(ui.action_deleteTask,SIGNAL(triggered()),this,SLOT(onCheckActionDeleteTask()));
 	remoteInfoModel = new QStandardItemModel(this);
 	QStringList title;
 	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("勾选");
@@ -43,7 +45,7 @@ void UpdateTools::showTasks() {
 				l.append(taskName);
 			}
 		}
-		QStringListModel* taskModel = new QStringListModel(l);
+		taskModel = new QStringListModel(l);
 		ui.listView_task->setModel(taskModel);
 	}
 }
@@ -216,4 +218,16 @@ void UpdateTools::onCheckBoxTotalClicked(bool clicked) {
 void UpdateTools::onCheckChoseLocalFileButton() {
 	localPath = QFileDialog::getExistingDirectory();
 	ui.lineEdit_localPath->setText(localPath);
+}
+
+void UpdateTools::onCheckActionNewTask() {
+	taskModel->insertRow(taskModel->rowCount()); //在尾部插入一空行
+	//QModelIndex  index;
+	QModelIndex index = taskModel->index(taskModel->rowCount() - 1, 0);//获取最后一行
+	taskModel->setData(index, QString::fromLocal8Bit("新任务"), Qt::DisplayRole);//设置显示文字
+}
+
+void UpdateTools::onCheckActionDeleteTask() {
+	QModelIndex index = ui.listView_task->currentIndex();
+	taskModel->removeRow(index.row());
 }
