@@ -11,20 +11,6 @@
                     "passwd": "384432^ch",
                     "path": "/home/temp",
                     "user": "root"
-                },
-                {
-                    "id": 1,
-                    "ip": "122.51.44.31",
-                    "passwd": "384432^ch",
-                    "path": "/home/temp",
-                    "user": "root"
-                },
-                {
-                    "id": 2,
-                    "ip": "122.51.44.31",
-                    "passwd": "384432^ch",
-                    "path": "/home/temp",
-                    "user": "root"
                 }
             ]
         },
@@ -32,27 +18,6 @@
             "localPath": "D:/Work/华锐",
             "name": "TT数据库上传",
             "remote": [
-                {
-                    "id": 0,
-                    "ip": "10.1.160.162",
-                    "passwd": "csc_1o8",
-                    "path": "/home/temp",
-                    "user": "root"
-                },
-                {
-                    "id": 1,
-                    "ip": "/home/temp",
-                    "passwd": "csc_1o8",
-                    "path": "/home/temp",
-                    "user": "root"
-                },
-                {
-                    "id": 2,
-                    "ip": "/home/temp",
-                    "passwd": "csc_1o8",
-                    "path": "/home/temp",
-                    "user": "root"
-                }
             ]
         }
     ],

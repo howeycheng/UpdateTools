@@ -3,7 +3,7 @@
 
 
 UpdateTools::UpdateTools(QWidget* parent)
-	: QMainWindow(parent), localPath(""), taskModel(NULL)
+	: QMainWindow(parent), localPath(""), taskModel(NULL), jsCfg(NULL)
 {
 	ui.setupUi(this);
 	connect(ui.pushButton_upLoad, SIGNAL(clicked()), this, SLOT(upLoad()));
@@ -14,6 +14,7 @@ UpdateTools::UpdateTools(QWidget* parent)
 	connect(ui.listView_task, SIGNAL(clicked(QModelIndex)), this, SLOT(showTaskDetail(QModelIndex)));
 	connect(ui.action_newTask,SIGNAL(triggered()),this,SLOT(onCheckActionNewTask()));
 	connect(ui.action_deleteTask,SIGNAL(triggered()),this,SLOT(onCheckActionDeleteTask()));
+	connect(ui.action_saveTask,SIGNAL(triggered()),this,SLOT(onCheckActionSaveCfg()));
 	remoteInfoModel = new QStandardItemModel(this);
 	QStringList title;
 	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("勾选");
@@ -21,14 +22,14 @@ UpdateTools::UpdateTools(QWidget* parent)
 	remoteInfoModel->setColumnCount(5);
 	remoteInfoModel->setHorizontalHeaderLabels(title);
 	ui.tableView_remote->setModel(remoteInfoModel);
+	jsCfg = JsonConfig("config.json");
 	showTasks();
 }
 
 void UpdateTools::showTasks() {
 	/*解析json文件*/
-	JsonConfig jc("config.json");
-	jc.loadJsonConfig();
-	QJsonObject jsonObject = jc.configJsonObj;
+	jsCfg.loadJsonConfig();
+	QJsonObject jsonObject = jsCfg.configJsonObj;
 	winSCP = std::string(jsonObject["winSCP"].toString().toLocal8Bit());
 	if (jsonObject.contains(QStringLiteral("tasks")))
 	{
@@ -52,6 +53,9 @@ void UpdateTools::showTasks() {
 
 void UpdateTools::showTaskDetail(QModelIndex index)
 {
+	QString task = ui.listView_task->model()->data(index).toString();
+	//QWidget* newTab = new QWidget();
+	//ui.tabWidget_task->addTab(newTab, task);
 	remoteInfoModel->clear();
 	QStringList title;
 	title << QString("ip") << QString("user") << QString("passwd") << QString("path") << QString::fromLocal8Bit("勾选");
@@ -59,11 +63,8 @@ void UpdateTools::showTaskDetail(QModelIndex index)
 	remoteInfoModel->setColumnCount(5);
 	remoteInfoModel->setHorizontalHeaderLabels(title);
 	ui.tableView_remote->setModel(remoteInfoModel);
-	QString task = ui.listView_task->model()->data(index).toString();
 	ui.tabWidget_task->setTabText(0,task);
-	JsonConfig jc("config.json");
-	jc.loadJsonConfig();
-	QJsonObject jsonObject = jc.configJsonObj;
+	QJsonObject jsonObject = jsCfg.configJsonObj;
 	if (jsonObject.contains(QStringLiteral("tasks")))
 	{
 		QJsonValue tasksValue = jsonObject.value(QStringLiteral("tasks"));
@@ -160,20 +161,11 @@ void UpdateTools::deleteRemoteInfo() {
 // 将界面修改的远程服务器信息保存至配置文件
 void UpdateTools::saveRemoteInfo() {
 	int index = ui.listView_task->currentIndex().row();
-	/*解析json文件*/
-	JsonConfig jc("config.json");
-	jc.loadJsonConfig();
-	QJsonObject jsonObject = jc.configJsonObj;
-
-	QJsonArray tasksValue = jsonObject.value(QStringLiteral("tasks")).toArray();
-	QJsonValue taskValue = tasksValue.at(index);
 	QJsonObject newTaskObj;
-	newTaskObj.insert("name", taskValue.toObject()["name"].toString());
-	//jsonObject.remove("localPath");
+	newTaskObj.insert("name", ui.tabWidget_task->tabText(0));
 	localPath = ui.lineEdit_localPath->text();
 	newTaskObj.insert("localPath", localPath);
 	// 删除原有远程服务器配置
-	//jsonObject.remove("remote");
 	QJsonArray remoteArray;
 	// 遍历远程服务器信息表
 	for (size_t i = 0; i < remoteInfoModel->rowCount(); i++)
@@ -191,21 +183,8 @@ void UpdateTools::saveRemoteInfo() {
 		remoteArray.append(obj);
 	}
 	newTaskObj.insert("remote", remoteArray);
-
-	tasksValue.replace(index, newTaskObj);
-	jsonObject.remove("tasks");
-	jsonObject.insert("tasks", tasksValue);
-	QJsonDocument jsonDoc;       //构建JSON文档
-	QFile fileWrite("config.json");
-	if (fileWrite.exists()) {
-		fileWrite.open(QIODevice::WriteOnly | QIODevice::Text);
-		jsonDoc.setObject(jsonObject);
-		fileWrite.seek(0);
-		fileWrite.write(jsonDoc.toJson());
-		fileWrite.flush();
-		fileWrite.close();
-		QMessageBox::information(NULL, QString::fromLocal8Bit("提示"), QString::fromLocal8Bit("保存成功"), QMessageBox::Ok | QMessageBox::Ok);
-	}
+	jsCfg.updateTask(index, newTaskObj);
+	jsCfg.saveJsonConfig("config.json");
 }
 
 
@@ -222,12 +201,17 @@ void UpdateTools::onCheckChoseLocalFileButton() {
 
 void UpdateTools::onCheckActionNewTask() {
 	taskModel->insertRow(taskModel->rowCount()); //在尾部插入一空行
-	//QModelIndex  index;
 	QModelIndex index = taskModel->index(taskModel->rowCount() - 1, 0);//获取最后一行
 	taskModel->setData(index, QString::fromLocal8Bit("新任务"), Qt::DisplayRole);//设置显示文字
+	jsCfg.addTask();
 }
 
 void UpdateTools::onCheckActionDeleteTask() {
 	QModelIndex index = ui.listView_task->currentIndex();
 	taskModel->removeRow(index.row());
+	jsCfg.deleteTask(index.row());
+}
+
+void UpdateTools::onCheckActionSaveCfg() {
+	jsCfg.saveJsonConfig("config.json");
 }

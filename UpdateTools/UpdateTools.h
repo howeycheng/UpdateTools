@@ -11,7 +11,6 @@
 #include <qjsonarray.h>
 #include <QTextCodec>
 #include <qcheckbox.h>
-#include <qmessagebox.h>
 #include <qfiledialog.h>
 #include <QStandardItemModel>
 #include <QtWidgets/QMainWindow>
@@ -36,6 +35,7 @@ private:
     std::vector<int> clickedRow;
     QString localPath;
     QStringListModel* taskModel;
+    JsonConfig jsCfg;
 
 private slots:
     void showTasks();
@@ -48,4 +48,5 @@ private slots:
     void onCheckChoseLocalFileButton();
     void onCheckActionNewTask();
     void onCheckActionDeleteTask();
+    void onCheckActionSaveCfg();
 };
